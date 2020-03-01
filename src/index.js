@@ -4,14 +4,10 @@ const { ApolloServer } = require('apollo-server');
 
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
-const { createStore } = require('./utils');
 
 const RefinebioAPI = require('./datasources/refinebio');
 
 const internalEngineDemo = require('./engine-demo');
-
-// creates a sequelize connection once. NOT for every request
-const store = createStore();
 
 // set up any dataSources our resolvers need
 const dataSources = () => ({
@@ -53,6 +49,5 @@ module.exports = {
   resolvers,
   ApolloServer,
   RefinebioAPI,
-  store,
   server
 };
