@@ -14,10 +14,23 @@ class RefinebioAPI extends RESTDataSource {
   }
 
   async getAllExperiments({ limit, offset }) {
-    const { results } = await this.get('experiments', { limit, offset });
+    const page = await this.get('experiments', { limit, offset });
 
     // transform the raw experiments to a more friendly
-    return results.map(experiment => this.experimentReducer(experiment));
+    return this.pageReducer(page, experiment =>
+      this.experimentReducer(experiment)
+    );
+  }
+
+  pageReducer(page, itemsReducer) {
+    return {
+      count: page.count,
+      pageInfo: {
+        hasNextPage: !!page.next,
+        hasPreviousPage: !!page.previous
+      },
+      results: page.results.map(itemsReducer)
+    };
   }
 
   sampleReducer(rawSample) {
@@ -28,26 +41,34 @@ class RefinebioAPI extends RESTDataSource {
     };
   }
 
-  async getExperimentSamples({ accessionCode, limit = 25, offset = 0 }) {
-    const { results } = await this.get('samples', {
-      experiment_accession_code: accessionCode,
-      limit,
-      offset
-    });
+  async getExperimentSamples({
+    accessionCode,
+    limit = 25,
+    offset = 0,
+    filter
+  }) {
+    const params = { experiment_accession_code: accessionCode, limit, offset };
+    if (filter) {
+      const { isProcessed } = filter;
+      if (isProcessed !== undefined) {
+        params['is_processed'] = isProcessed;
+      }
+    }
+    const page = await this.get('samples', params);
 
     // transform the raw experiments to a more friendly
-    return results.map(sample => this.sampleReducer(sample));
+    return this.pageReducer(page, sample => this.sampleReducer(sample));
   }
 
   async searchExperiments({ q, limit, offset }) {
-    const { results } = await this.get('search', {
+    const page = await this.get('search', {
       search: q,
       limit,
       offset
     });
 
     // transform the raw experiments to a more friendly
-    return results.map(experiment => this.sampleReducer(experiment));
+    return this.pageReducer(page, experiment => this.sampleReducer(experiment));
   }
 
   searchResultReducer(raw) {

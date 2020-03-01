@@ -2,14 +2,40 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
   type Query {
-    experiments(limit: Int, offset: Int): [Experiment]!
+    experiments(limit: Int, offset: Int): ExperimentPaginated!
     search(q: String, limit: Int, offset: Int): [ExperimentSearchResult]!
+  }
+
+  type PageInfo {
+    hasNextPage: Boolean
+    hasPrevPage: Boolean
+  }
+
+  interface IPaginated {
+    count: Int
+    pageInfo: PageInfo
+  }
+
+  type ExperimentPaginated implements IPaginated {
+    count: Int
+    pageInfo: PageInfo
+    results: [Experiment]
   }
 
   type Experiment {
     id: Int
     accessionCode: String
-    samples(limit: Int, offset: Int): [Sample]
+    samples(limit: Int, offset: Int, filter: SampleFilterInput): SamplePaginated
+  }
+
+  input SampleFilterInput {
+    isProcessed: Boolean
+  }
+
+  type SamplePaginated implements IPaginated {
+    count: Int
+    pageInfo: PageInfo
+    results: [Sample]
   }
 
   type Sample {

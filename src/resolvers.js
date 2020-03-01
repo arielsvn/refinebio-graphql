@@ -19,11 +19,16 @@ module.exports = {
     }
   },
   Experiment: {
-    samples: async (experiment, { limit = 25, offset = 0 }, { dataSources }) =>
+    samples: async (
+      experiment,
+      { limit = 25, offset = 0, filter },
+      { dataSources }
+    ) =>
       dataSources.refinebioAPI.getExperimentSamples({
         accessionCode: experiment.accessionCode,
         limit,
-        offset
+        offset,
+        filter
       })
   },
   ExperimentSearchResult: {
