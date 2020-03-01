@@ -25,6 +25,7 @@ const server = new ApolloServer({
   context,
   introspection: true,
   playground: true,
+  tracing: true,
   engine: {
     apiKey: process.env.ENGINE_API_KEY
   }

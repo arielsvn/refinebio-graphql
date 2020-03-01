@@ -1,4 +1,15 @@
+const GraphQLJSON = require('graphql-type-json');
+
 module.exports = {
+  JSON: GraphQLJSON,
+  Mutation: {
+    createToken(_, args, { dataSources }) {
+      return dataSources.refinebioAPI.createToken();
+    },
+    createDataset(_, args, { dataSources }) {
+      return dataSources.refinebioAPI.createDataset();
+    }
+  },
   Query: {
     experiments: async (_, { limit = 25, offset = 0 }, { dataSources }) => {
       const allExperiments = await dataSources.refinebioAPI.getAllExperiments({

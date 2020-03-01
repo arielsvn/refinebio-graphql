@@ -1,9 +1,42 @@
 const { gql } = require('apollo-server');
 
 const typeDefs = gql`
+  scalar JSON
+
   type Query {
     experiments(limit: Int, offset: Int): ExperimentPaginated!
     search(q: String, limit: Int, offset: Int): [ExperimentSearchResult]!
+  }
+
+  type Mutation {
+    createToken: Token!
+    createDataset: Dataset!
+  }
+
+  type Token {
+    id: String!
+  }
+
+  type Dataset {
+    id: String!
+    aggregateBy: String
+    scaleBy: String
+    data: JSON
+    isProcessed: Boolean
+    isProcessing: Boolean
+    isAvailable: Boolean
+    expiresOn: String
+    s3Bucket: String
+    s3Key: String
+    success: Boolean
+    failureReason: String
+    createdAt: String
+    lastModified: String
+    sizeInBytes: Float
+    sha1: String
+    quantileNormalize: Boolean
+    quantSfOnly: Boolean
+    svdAlgorithm: String
   }
 
   type PageInfo {

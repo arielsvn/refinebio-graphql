@@ -78,6 +78,44 @@ class RefinebioAPI extends RESTDataSource {
       hasPublication: raw.has_publication
     };
   }
+
+  async createToken() {
+    const { id } = await this.post('token/', {});
+    // activate the token
+    await this.put(`token/${id}/`, { is_activated: true });
+    return { id };
+  }
+
+  async createDataset() {
+    let dataset = await this.post('dataset/', { data: {} });
+
+    return this.dataSetReducer(dataset);
+  }
+
+  dataSetReducer(raw) {
+    return {
+      ...raw,
+      aggregateBy: raw.aggregate_by,
+      scaleBy: raw.scale_by,
+      isProcessing: raw.is_processing,
+      isProcessed: raw.is_processed,
+      isAvailable: raw.is_available,
+      hasEmail: raw.has_email,
+      expiresOn: raw.expires_on,
+      s3Bucket: raw.s3_bucket,
+      s3Key: raw.s3_key,
+      success: raw.success,
+      failureReason: raw.failure_reason,
+      createdAt: raw.created_at,
+      lastModified: raw.last_modified,
+      start: raw.start,
+      sizeInBytes: raw.size_in_bytes,
+      sha1: raw.sha1,
+      quantileNormalize: raw.quantile_normalize,
+      quantSfOnly: raw.quant_sf_only,
+      svdAlgorithm: raw.svd_algorithm
+    };
+  }
 }
 
 module.exports = RefinebioAPI;
