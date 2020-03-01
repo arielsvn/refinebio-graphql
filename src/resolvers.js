@@ -1,5 +1,3 @@
-const { paginateResults } = require('./utils');
-
 module.exports = {
   Query: {
     experiments: async (_, { limit = 25, offset = 0 }, { dataSources }) => {
