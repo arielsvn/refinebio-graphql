@@ -7,8 +7,6 @@ const resolvers = require('./resolvers');
 
 const RefinebioAPI = require('./datasources/refinebio');
 
-const internalEngineDemo = require('./engine-demo');
-
 // set up any dataSources our resolvers need
 const dataSources = () => ({
   refinebioAPI: new RefinebioAPI()
@@ -28,8 +26,7 @@ const server = new ApolloServer({
   introspection: true,
   playground: true,
   engine: {
-    apiKey: process.env.ENGINE_API_KEY,
-    ...internalEngineDemo
+    apiKey: process.env.ENGINE_API_KEY
   }
 });
 
