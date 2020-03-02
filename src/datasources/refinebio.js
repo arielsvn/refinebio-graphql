@@ -86,10 +86,36 @@ class RefinebioAPI extends RESTDataSource {
     return { id };
   }
 
-  async createDataset() {
-    let dataset = await this.post('dataset/', { data: {} });
-
+  async getDataset(id) {
+    let dataset = await this.get(`dataset/${id}`);
     return this.dataSetReducer(dataset);
+  }
+
+  async updateDataset(dataset) {
+    let updatedDataset = await this.put(`dataset/${dataset.id}/`, {
+      data: dataset.data,
+      aggregate_by: dataset.aggregateBy,
+      scale_by: dataset.scaleBy,
+      quantile_normalize: dataset.quantileNormalize,
+      quant_sf_only: dataset.quantSfOnly,
+      svd_algorithm: dataset.svdAlgorithm
+    });
+
+    return this.dataSetReducer(updatedDataset);
+  }
+
+  async createDataset(dataset = null) {
+    let createdDataset = await this.post('dataset/', { data: {} });
+
+    if (dataset) {
+      createdDataset = await this.updateDataset({
+        id: createdDataset.id,
+        data: createdDataset.data,
+        ...dataset
+      });
+    }
+
+    return this.dataSetReducer(createdDataset);
   }
 
   dataSetReducer(raw) {

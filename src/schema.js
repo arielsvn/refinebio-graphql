@@ -2,25 +2,39 @@ const { gql } = require('apollo-server');
 
 const typeDefs = gql`
   scalar JSON
+  scalar JSONObject
 
   type Query {
     experiments(limit: Int, offset: Int): ExperimentPaginated!
     search(q: String, limit: Int, offset: Int): [ExperimentSearchResult]!
+    dataset(id: String): Dataset
   }
 
   type Mutation {
     createToken: Token!
-    createDataset: Dataset!
+    createDataset(dataset: CreateDatasetInput): Dataset!
+    updateDataset(dataset: UpdateDatasetInput!): Dataset!
   }
 
   type Token {
     id: String!
   }
 
+  enum Aggregation {
+    EXPERIMENT
+    SPECIES
+  }
+
+  enum Scale {
+    NONE
+    MINMAX
+    STANDARD
+  }
+
   type Dataset {
     id: String!
-    aggregateBy: String
-    scaleBy: String
+    aggregateBy: Aggregation
+    scaleBy: Scale
     data: JSON
     isProcessed: Boolean
     isProcessing: Boolean
@@ -34,6 +48,25 @@ const typeDefs = gql`
     lastModified: String
     sizeInBytes: Float
     sha1: String
+    quantileNormalize: Boolean
+    quantSfOnly: Boolean
+    svdAlgorithm: String
+  }
+
+  input CreateDatasetInput {
+    data: JSON
+    aggregateBy: Aggregation
+    scaleBy: Scale
+    quantileNormalize: Boolean
+    quantSfOnly: Boolean
+    svdAlgorithm: String
+  }
+
+  input UpdateDatasetInput {
+    id: String!
+    data: JSONObject!
+    aggregateBy: Aggregation
+    scaleBy: Scale
     quantileNormalize: Boolean
     quantSfOnly: Boolean
     svdAlgorithm: String

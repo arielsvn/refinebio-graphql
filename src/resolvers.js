@@ -2,12 +2,16 @@ const GraphQLJSON = require('graphql-type-json');
 
 module.exports = {
   JSON: GraphQLJSON,
+  JSONObject: GraphQLJSON.GraphQLJSONObject,
   Mutation: {
     createToken(_, args, { dataSources }) {
       return dataSources.refinebioAPI.createToken();
     },
-    createDataset(_, args, { dataSources }) {
-      return dataSources.refinebioAPI.createDataset();
+    createDataset(_, { dataset }, { dataSources }) {
+      return dataSources.refinebioAPI.createDataset(dataset);
+    },
+    updateDataset(_, { dataset }, { dataSources }) {
+      return dataSources.refinebioAPI.updateDataset(dataset);
     }
   },
   Query: {
@@ -25,6 +29,9 @@ module.exports = {
         offset
       });
       return allExperiments;
+    },
+    dataset: async (_, { id }, { dataSources }) => {
+      return dataSources.refinebioAPI.getDataset(id);
     }
   },
   Experiment: {
